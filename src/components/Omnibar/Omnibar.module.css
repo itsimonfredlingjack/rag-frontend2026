@@ -1,0 +1,107 @@
+.container {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.logo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 10px rgba(255,255,255,0.8);
+}
+
+.omnibar {
+  width: 100%;
+  /* True Glassmorphism & 3D Lighting */
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--glass-highlight);
+  border-radius: 32px;
+  box-shadow: var(--shadow-xl);
+  
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.omnibar:focus-within {
+  background: var(--glass-bg-hover);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), var(--shadow-xl);
+  transform: translateY(-4px);
+}
+
+.searchIcon {
+  color: var(--accent-blue);
+  margin-right: 1rem;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 1.25rem 0.5rem;
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  outline: none;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.metricsRow {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.metricBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--glass-highlight);
+  border-radius: 99px;
+  
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metricBadge:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: var(--glass-bg-hover);
+}
+
+.metricBadge .indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--node-success);
+  box-shadow: 0 0 8px var(--node-success);
+}

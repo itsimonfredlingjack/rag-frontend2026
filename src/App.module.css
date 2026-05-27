@@ -1,0 +1,60 @@
+.appShell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+/* Empty State: Center Omnibar */
+.emptyStateWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+  z-index: 20;
+}
+
+.emptyStateWrapper.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-30px) scale(0.98);
+  filter: blur(4px);
+}
+
+/* Active State: Massive Central Chat */
+.activeWorkspaceWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+  transform: translateY(20px);
+  z-index: 15;
+}
+
+.activeWorkspaceWrapper.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
