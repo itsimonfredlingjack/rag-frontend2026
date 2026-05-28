@@ -1,4 +1,5 @@
-import { Search, ArrowDownUp, CheckCircle, BrainCircuit, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Search, ArrowDownUp, CheckCircle, BrainCircuit, Sparkles, ChevronDown, ChevronRight } from 'lucide-react';
 import styles from './PipelineVisualizer.module.css';
 
 export type PipelineStep = 'idle' | 'retrieval' | 'rerank' | 'crag' | 'critic' | 'generate' | 'done';
@@ -8,6 +9,9 @@ interface PipelineVisualizerProps {
 }
 
 export default function PipelineVisualizer({ currentStep }: PipelineVisualizerProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isDone = currentStep === 'done';
+
   const steps = [
     { id: 'retrieval', label: 'BM25 + Vector', icon: Search },
     { id: 'rerank', label: 'Reranker', icon: ArrowDownUp },
@@ -38,29 +42,52 @@ export default function PipelineVisualizer({ currentStep }: PipelineVisualizerPr
     return 'idle';
   };
 
+  const showExpanded = !isDone || isExpanded;
+
   return (
-    <div className={styles.container}>
-      {steps.map((step, index) => {
-        const Icon = step.icon;
-        const status = getStepStatus(step.id);
-        
-        return (
-          <div key={step.id} style={{ display: 'flex', alignItems: 'center', flex: index < steps.length - 1 ? 1 : 0 }}>
-            <div className={`${styles.node} ${styles[status]}`}>
-              <div className={styles.iconWrapper}>
-                <Icon size={18} />
-              </div>
-              <span className={styles.nodeTitle}>{step.label}</span>
-            </div>
-            
-            {index < steps.length - 1 && (
-              <div className={styles.lineWrapper}>
-                <div className={`${styles.lineProgress} ${styles[getLineStatus(index)]}`} />
-              </div>
-            )}
+    <div className={`${styles.container} ${isDone && !isExpanded ? styles.collapsed : ''}`}>
+      {isDone && (
+        <div 
+          className={styles.summaryHeader} 
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className={styles.summaryTitle}>
+            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            <span style={{ marginLeft: '0.5rem' }}>Retrieval Trace</span>
           </div>
-        );
-      })}
+          <div className={styles.summaryStats}>
+            <span className={styles.statBadge}>2 Sources</span>
+            <span className={styles.statBadge}>CRAG Verified</span>
+            <span className={styles.statBadge}>1.2s</span>
+          </div>
+        </div>
+      )}
+
+      {showExpanded && (
+        <div className={styles.pipelineFlow}>
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const status = getStepStatus(step.id);
+            
+            return (
+              <div key={step.id} style={{ display: 'flex', alignItems: 'center', flex: index < steps.length - 1 ? 1 : 0 }}>
+                <div className={`${styles.node} ${styles[status]}`}>
+                  <div className={styles.iconWrapper}>
+                    <Icon size={18} />
+                  </div>
+                  <span className={styles.nodeTitle}>{step.label}</span>
+                </div>
+                
+                {index < steps.length - 1 && (
+                  <div className={styles.lineWrapper}>
+                    <div className={`${styles.lineProgress} ${styles[getLineStatus(index)]}`} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,16 @@
-import { Search, Layers } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle, BrainCircuit } from 'lucide-react';
 import styles from './Omnibar.module.css';
 import { type KeyboardEvent, useState } from 'react';
+
+const AbstractLogo = () => (
+  <svg width="48" height="48" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'var(--text-primary)' }}>
+    <circle cx="6" cy="14" r="3" fill="currentColor" />
+    <circle cx="14" cy="8" r="3" fill="currentColor" />
+    <circle cx="14" cy="20" r="3" fill="currentColor" />
+    <circle cx="22" cy="14" r="4" fill="currentColor" />
+    <path d="M8.5 12.5L11.5 9.5M8.5 15.5L11.5 18.5M16.5 9.5L19 12M16.5 18.5L19 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
 
 interface OmnibarProps {
   onSearch: (query: string) => void;
@@ -8,6 +18,7 @@ interface OmnibarProps {
 
 export default function Omnibar({ onSearch }: OmnibarProps) {
   const [query, setQuery] = useState('');
+  const [strategy, setStrategy] = useState('Hybrid');
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && query.trim()) {
@@ -17,13 +28,18 @@ export default function Omnibar({ onSearch }: OmnibarProps) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.logo}>
-        <Layers size={32} color="var(--accent-blue)" />
-        Svensk RAG Command Center
+      <div className={styles.heroSection}>
+        <AbstractLogo />
+        <h1 className={styles.heroTitle}>Svensk RAG</h1>
+        <p className={styles.heroSubtitle}>Ask your corpus. Inspect how the answer was built.</p>
       </div>
       
-      <div className={styles.omnibar}>
-        <Search className={styles.searchIcon} size={24} />
+      <div className={styles.commandObject}>
+        <div className={styles.scopeSelector}>
+          <span>All Documents</span>
+          <ChevronDown size={14} />
+        </div>
+        
         <input 
           type="text" 
           className={styles.input} 
@@ -33,20 +49,34 @@ export default function Omnibar({ onSearch }: OmnibarProps) {
           onKeyDown={handleKeyDown}
           autoFocus
         />
+
+        <div className={styles.controlsGroup}>
+          <div 
+            className={styles.controlToggle} 
+            onClick={() => setStrategy(strategy === 'Hybrid' ? 'Vector' : strategy === 'Vector' ? 'BM25' : 'Hybrid')}
+          >
+            <BrainCircuit size={14} />
+            {strategy}
+          </div>
+          <div className={`${styles.controlToggle} ${styles.active}`}>
+            <CheckCircle size={14} />
+            CRAG: Auto
+          </div>
+        </div>
       </div>
 
-      <div className={styles.metricsRow}>
-        <div className={styles.metricBadge}>
-          <div className={styles.indicator} />
-          BM25 FTS5 Indexed
+      <div className={styles.machineStatusRow}>
+        <div className={styles.statusItem}>
+          <span className={styles.statusDot} />
+          ChromaDB: 14.2ms
         </div>
-        <div className={styles.metricBadge}>
-          <div className={styles.indicator} />
-          ChromaDB Ready
+        <div className={styles.statusItem}>
+          <span className={styles.statusDot} />
+          BM25 Index: 142k chunks
         </div>
-        <div className={styles.metricBadge}>
-          <div className={styles.indicator} />
-          CRAG Evaluator Active
+        <div className={styles.statusItem}>
+          <span className={styles.statusDot} />
+          Local Embedding Model Loaded
         </div>
       </div>
     </div>

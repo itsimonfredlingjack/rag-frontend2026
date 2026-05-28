@@ -7,7 +7,6 @@ import PipelineVisualizer, { type PipelineStep } from './PipelineVisualizer';
 interface ChatAreaProps {
   onOpenDocument: (doc: DocumentCitation) => void;
   initialQuery: string;
-  isActive: boolean;
 }
 
 interface Message {
@@ -15,77 +14,81 @@ interface Message {
   role: 'user' | 'ai';
   content: string;
   citations?: DocumentCitation[];
+  pipelineState?: PipelineStep;
 }
 
 const mockCitations: DocumentCitation[] = [
   {
     id: 'doc1',
-    title: 'BM25 FTS5 Match',
+    title: 'SOU 2023:14',
     snippet: 'Found exact term matches in SOU 2023:14...',
     content: 'BM25 Retrieval Strategy: High keyword overlap for "myndigheters datadelning". Raw BM25 Score: 14.52. Reranked Score: 0.94.',
     score: 0.94,
   },
   {
     id: 'doc2',
-    title: 'Vector Semantics Match',
+    title: 'Proposition 2022/23:10',
     snippet: 'Semantic alignment with GDPR compliance...',
     content: 'Vector Search Strategy: High semantic similarity via text-embedding-v3. Propositionen föreslår sekretessbrytande bestämmelser.',
     score: 0.88,
   }
 ];
 
-export default function ChatArea({ onOpenDocument, initialQuery, isActive }: ChatAreaProps) {
+export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [pipelineStep, setPipelineStep] = useState<PipelineStep>('idle');
-  const [hasProcessedInitial, setHasProcessedInitial] = useState(false);
+  const hasProcessedRef = useRef(false);
   
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isActive && initialQuery && !hasProcessedInitial) {
-      setHasProcessedInitial(true);
+    if (initialQuery && !hasProcessedRef.current) {
+      hasProcessedRef.current = true;
       executeSearch(initialQuery);
     }
-  }, [isActive, initialQuery, hasProcessedInitial]);
+  }, [initialQuery]);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping, pipelineStep]);
+  }, [messages, isTyping]);
 
   const executeSearch = (query: string) => {
     const newUserMsg: Message = { id: Date.now().toString(), role: 'user', content: query };
-    setMessages(prev => [...prev, newUserMsg]);
+    const aiMessageId = (Date.now() + 1).toString();
+    
+    setMessages(prev => [...prev, newUserMsg, {
+      id: aiMessageId,
+      role: 'ai',
+      content: '',
+      pipelineState: 'retrieval'
+    }]);
+    
     setIsTyping(true);
     
     // Animate the pipeline
     const sequence: PipelineStep[] = ['retrieval', 'rerank', 'crag', 'critic', 'generate'];
     let stepIndex = 0;
     
-    setPipelineStep(sequence[0]);
-    
     const interval = setInterval(() => {
       stepIndex++;
       if (stepIndex < sequence.length) {
-        setPipelineStep(sequence[stepIndex]);
+        setMessages(prev => prev.map(m => 
+          m.id === aiMessageId ? { ...m, pipelineState: sequence[stepIndex] } : m
+        ));
       } else {
         clearInterval(interval);
-        setPipelineStep('done');
-        setIsTyping(false);
-        setMessages(prev => [
-          ...prev,
-          {
-            id: (Date.now() + 1).toString(),
-            role: 'ai',
+        setMessages(prev => prev.map(m => 
+          m.id === aiMessageId ? {
+            ...m,
+            pipelineState: 'done',
             content: 'Enligt SOU 2023:14 föreslås nya bestämmelser för att underlätta myndigheters datadelning. Efter utvärdering av CRAG har svaret reviderats för att inkludera referenser till GDPR-kompatibilitet.',
             citations: [mockCitations[0], mockCitations[1]],
-          }
-        ]);
-        
-        setTimeout(() => setPipelineStep('idle'), 2000); // Reset after a while
+          } : m
+        ));
+        setIsTyping(false);
       }
-    }, 1000); // 1 second per pipeline step for demo purposes
+    }, 1000);
   };
 
   const handleSend = () => {
@@ -110,31 +113,33 @@ export default function ChatArea({ onOpenDocument, initialQuery, isActive }: Cha
             <div className={`${styles.avatar} ${styles[msg.role]}`}>
               {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}
             </div>
-            <div className={styles.messageContent}>
-              {msg.content}
-              {msg.citations && msg.citations.map((cite, i) => (
-                <span 
-                  key={cite.id} 
-                  className={styles.citationBadge}
-                  onClick={() => onOpenDocument(cite)}
-                >
-                  View Insights [{i + 1}]
-                </span>
-              ))}
+            <div className={styles.messageContent} style={msg.role === 'ai' ? { width: '100%' } : {}}>
+              
+              {/* Persistent Retrieval Trace */}
+              {msg.role === 'ai' && msg.pipelineState && (
+                 <PipelineVisualizer currentStep={msg.pipelineState} />
+              )}
+              
+              {/* Message Content with Inline Source Chips */}
+              {msg.content && (
+                <div style={{ marginTop: msg.pipelineState ? '1rem' : '0' }}>
+                  {msg.content}
+                  {msg.citations && msg.citations.map((cite, i) => (
+                    <span 
+                      key={cite.id} 
+                      className={styles.citationBadge}
+                      onClick={() => onOpenDocument(cite)}
+                      title={cite.title}
+                    >
+                      [{i + 1}: {cite.title}]
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}
         
-        {isTyping && (
-          <div className={`${styles.messageRow} ${styles.ai}`}>
-             <div className={`${styles.avatar} ${styles.ai}`}>
-               <Sparkles size={20} />
-             </div>
-             <div className={styles.messageContent} style={{ width: '100%' }}>
-               <PipelineVisualizer currentStep={pipelineStep} />
-             </div>
-          </div>
-        )}
         <div ref={endOfMessagesRef} />
       </div>
 

@@ -22,26 +22,35 @@ export default function InsightsPanel({ activeDocument, onClose }: InsightsPanel
       
       {activeDocument && (
         <div className={styles.contentScroll}>
-          <div className={styles.metaGrid}>
-            <div className={styles.metaCard}>
-              <div className={styles.metaLabel}><Target size={14} /> Pipeline Source</div>
-              <div className={styles.metaValue}>{activeDocument.title.includes('BM25') ? 'FTS5 / BM25' : 'ChromaDB'}</div>
-            </div>
-            <div className={styles.metaCard}>
-              <div className={styles.metaLabel}><Zap size={14} /> Rerank Score</div>
-              <div className={styles.metaValue}>{(activeDocument.score * 100).toFixed(1)}%</div>
-            </div>
-            <div className={styles.metaCard} style={{ gridColumn: '1 / -1' }}>
-              <div className={styles.metaLabel}><ShieldCheck size={14} /> CRAG Evaluation</div>
-              <div className={`${styles.metaValue} ${styles.success}`}>Relevant (Pass)</div>
-            </div>
+          <div className={styles.verdictStrip}>
+            <ShieldCheck size={16} className={styles.verdictIcon} />
+            <strong>CRAG Verdict: </strong> Supporting
           </div>
-          
-          <div className={styles.sectionHeader}>Extracted Context</div>
+
+          <div className={styles.sectionHeader}>Source Preview</div>
           <div className={styles.documentText}>
             {activeDocument.content.split('\n').map((paragraph, idx) => (
               <p key={idx}>{paragraph}</p>
             ))}
+          </div>
+
+          <div className={styles.metaGrid}>
+            <div className={styles.metaCard}>
+              <div className={styles.metaLabel}><Target size={14} /> Retrieval Method</div>
+              <div className={styles.metaValue}>Hybrid (BM25 + Vector)</div>
+            </div>
+            <div className={styles.metaCard}>
+              <div className={styles.metaLabel}><Zap size={14} /> Final Score</div>
+              <div className={styles.metaValue}>{(activeDocument.score * 100).toFixed(1)}%</div>
+            </div>
+            <div className={styles.metaCard}>
+              <div className={styles.metaLabel}>BM25 Score</div>
+              <div className={styles.metaValue}>14.52</div>
+            </div>
+            <div className={styles.metaCard}>
+              <div className={styles.metaLabel}>Vector Distance</div>
+              <div className={styles.metaValue}>0.12</div>
+            </div>
           </div>
         </div>
       )}

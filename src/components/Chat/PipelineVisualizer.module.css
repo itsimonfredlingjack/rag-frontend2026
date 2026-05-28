@@ -1,16 +1,62 @@
 .container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
-  padding: 1.5rem;
+  padding: 1rem 1.25rem;
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
   margin-bottom: 1rem;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-diffuse);
+  box-shadow: var(--shadow-elevated);
+  transition: all 0.2s ease;
+}
+
+.summaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.summaryTitle {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.summaryStats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statBadge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  background: var(--bg-surface-hover);
+  border: 1px solid var(--border-subtle);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.pipelineFlow {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.summaryHeader + .pipelineFlow {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-subtle);
 }
 
 .node {
@@ -19,30 +65,31 @@
   align-items: center;
   gap: 0.5rem;
   z-index: 2;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .iconWrapper {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--bg-main);
-  border: 2px solid var(--border-strong);
+  background: var(--bg-surface);
+  border: 2px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-tertiary);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   position: relative;
 }
 
 .nodeTitle {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 /* States */

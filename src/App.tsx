@@ -35,26 +35,44 @@ function App() {
     <div className={styles.appShell}>
       <Sidebar />
       <main className={styles.mainContent}>
-        
-        {/* Omnibar Empty State */}
-        <div className={`${styles.emptyStateWrapper} ${hasStarted ? styles.hidden : ''}`}>
-          <Omnibar onSearch={handleStartSearch} />
-        </div>
-
-        {/* Active Massive Chat Area */}
-        <div className={`${styles.activeWorkspaceWrapper} ${hasStarted ? styles.active : ''}`}>
-          <ChatArea 
-            onOpenDocument={handleOpenDocument} 
-            initialQuery={initialQuery}
-            isActive={hasStarted}
-          />
-        </div>
+        {/* Conditional Rendering for Accessibility */}
+        {!hasStarted ? (
+          <div className={styles.emptyStateWrapper}>
+            <div className={styles.emptyStateContent}>
+              <Omnibar onSearch={handleStartSearch} />
+              
+              <div className={styles.exampleQueries}>
+                <div className={styles.exampleCard} onClick={() => handleStartSearch('Hur förhåller sig Offentlighetsprincipen till GDPR vid utlämnande av handlingar?')}>
+                  <h4>GDPR vs Offentlighetsprincipen</h4>
+                  <p>Hur förhåller sig Offentlighetsprincipen till GDPR vid utlämnande av handlingar?</p>
+                </div>
+                <div className={styles.exampleCard} onClick={() => handleStartSearch('Vad innebär SOU 2023:14 för myndigheters datadelning?')}>
+                  <h4>Datadelning (SOU 2023:14)</h4>
+                  <p>Vad innebär SOU 2023:14 för statliga myndigheters datadelning?</p>
+                </div>
+                <div className={styles.exampleCard} onClick={() => handleStartSearch('Sammanfatta Proposition 2022/23:10 gällande sekretessbrytande bestämmelser.')}>
+                  <h4>Sekretessbrytande bestämmelser</h4>
+                  <p>Sammanfatta Proposition 2022/23:10 gällande sekretessbrytande bestämmelser.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.activeWorkspaceWrapper}>
+            <ChatArea 
+              onOpenDocument={handleOpenDocument} 
+              initialQuery={initialQuery}
+            />
+          </div>
+        )}
       </main>
       
-      <InsightsPanel 
-        activeDocument={activeDocument} 
-        onClose={handleCloseDocument} 
-      />
+      {activeDocument && (
+        <InsightsPanel 
+          activeDocument={activeDocument} 
+          onClose={handleCloseDocument} 
+        />
+      )}
     </div>
   );
 }
