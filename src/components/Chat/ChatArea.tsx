@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, User, Sparkles } from 'lucide-react';
+import { Send, User, Copy, RefreshCcw, ThumbsUp, ThumbsDown } from 'lucide-react';
 import styles from './ChatArea.module.css';
 import type { DocumentCitation } from '../../App';
 import PipelineVisualizer, { type PipelineStep } from './PipelineVisualizer';
+import RagLogo from '../Shared/RagLogo';
 
 interface ChatAreaProps {
   onOpenDocument: (doc: DocumentCitation) => void;
@@ -15,6 +16,9 @@ interface Message {
   content: string;
   citations?: DocumentCitation[];
   pipelineState?: PipelineStep;
+  query?: string;
+  isStreaming?: boolean;
+  feedback?: 'up' | 'down';
 }
 
 const mockCitations: DocumentCitation[] = [
@@ -61,7 +65,8 @@ export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps
       id: aiMessageId,
       role: 'ai',
       content: '',
-      pipelineState: 'retrieval'
+      pipelineState: 'retrieval',
+      query: query
     }]);
     
     setIsTyping(true);
@@ -70,25 +75,59 @@ export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps
     const sequence: PipelineStep[] = ['retrieval', 'rerank', 'crag', 'critic', 'generate'];
     let stepIndex = 0;
     
-    const interval = setInterval(() => {
+    const pipelineInterval = setInterval(() => {
       stepIndex++;
       if (stepIndex < sequence.length) {
         setMessages(prev => prev.map(m => 
           m.id === aiMessageId ? { ...m, pipelineState: sequence[stepIndex] } : m
         ));
       } else {
-        clearInterval(interval);
+        clearInterval(pipelineInterval);
+        
+        // Start streaming phase
+        const fullText = 'Enligt SOU 2023:14 föreslås nya bestämmelser för att underlätta myndigheters datadelning. Efter utvärdering av CRAG har svaret reviderats för att inkludera referenser till GDPR-kompatibilitet.';
+        let currentText = '';
+        let charIndex = 0;
+        
         setMessages(prev => prev.map(m => 
-          m.id === aiMessageId ? {
-            ...m,
-            pipelineState: 'done',
-            content: 'Enligt SOU 2023:14 föreslås nya bestämmelser för att underlätta myndigheters datadelning. Efter utvärdering av CRAG har svaret reviderats för att inkludera referenser till GDPR-kompatibilitet.',
-            citations: [mockCitations[0], mockCitations[1]],
-          } : m
+          m.id === aiMessageId ? { ...m, pipelineState: 'done', isStreaming: true } : m
         ));
-        setIsTyping(false);
+        
+        const streamInterval = setInterval(() => {
+          const chunkSize = Math.floor(Math.random() * 4) + 2;
+          currentText += fullText.substring(charIndex, charIndex + chunkSize);
+          charIndex += chunkSize;
+          
+          if (charIndex >= fullText.length) {
+            currentText = fullText;
+            clearInterval(streamInterval);
+            setMessages(prev => prev.map(m => 
+              m.id === aiMessageId ? { 
+                ...m, 
+                content: currentText, 
+                isStreaming: false, 
+                citations: [mockCitations[0], mockCitations[1]] 
+              } : m
+            ));
+            setIsTyping(false);
+          } else {
+            setMessages(prev => prev.map(m => 
+              m.id === aiMessageId ? { ...m, content: currentText } : m
+            ));
+          }
+        }, 30);
       }
-    }, 1000);
+    }, 800);
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  const handleFeedback = (messageId: string, type: 'up' | 'down') => {
+    setMessages(prev => prev.map(m => 
+      m.id === messageId ? { ...m, feedback: m.feedback === type ? undefined : type } : m
+    ));
   };
 
   const handleSend = () => {
@@ -111,7 +150,7 @@ export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps
         {messages.map(msg => (
           <div key={msg.id} className={`${styles.messageRow} ${styles[msg.role]}`}>
             <div className={`${styles.avatar} ${styles[msg.role]}`}>
-              {msg.role === 'user' ? <User size={20} /> : <Sparkles size={20} />}
+              {msg.role === 'user' ? <User size={20} /> : <RagLogo size={20} />}
             </div>
             <div className={styles.messageContent} style={msg.role === 'ai' ? { width: '100%' } : {}}>
               
@@ -124,6 +163,7 @@ export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps
               {msg.content && (
                 <div style={{ marginTop: msg.pipelineState ? '1rem' : '0' }}>
                   {msg.content}
+                  {msg.isStreaming && <span style={{ display: 'inline-block', width: '8px', height: '16px', background: 'var(--accent-blue)', verticalAlign: 'middle', marginLeft: '4px', animation: 'pulseGlow 1s infinite' }} />}
                   {msg.citations && msg.citations.map((cite, i) => (
                     <span 
                       key={cite.id} 
@@ -134,6 +174,32 @@ export default function ChatArea({ onOpenDocument, initialQuery }: ChatAreaProps
                       [{i + 1}: {cite.title}]
                     </span>
                   ))}
+                </div>
+              )}
+              
+              {/* Actions Bar */}
+              {msg.role === 'ai' && msg.pipelineState === 'done' && !msg.isStreaming && (
+                <div className={styles.messageActions}>
+                  <button className={styles.actionBtn} onClick={() => handleCopy(msg.content)} title="Copy message">
+                    <Copy size={16} />
+                  </button>
+                  <button className={styles.actionBtn} onClick={() => msg.query && executeSearch(msg.query)} title="Regenerate">
+                    <RefreshCcw size={16} />
+                  </button>
+                  <button 
+                    className={`${styles.actionBtn} ${msg.feedback === 'up' ? styles.active : ''}`} 
+                    onClick={() => handleFeedback(msg.id, 'up')}
+                    title="Good response"
+                  >
+                    <ThumbsUp size={16} />
+                  </button>
+                  <button 
+                    className={`${styles.actionBtn} ${msg.feedback === 'down' ? styles.active : ''}`} 
+                    onClick={() => handleFeedback(msg.id, 'down')}
+                    title="Bad response"
+                  >
+                    <ThumbsDown size={16} />
+                  </button>
                 </div>
               )}
             </div>

@@ -1,0 +1,215 @@
+.documentContainer {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 8rem);
+}
+
+.queryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.queryLabel {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-green);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.queryTimestamp {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.queryTitle {
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.answerHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.answerLabel {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-green);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.cragBadge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background-color: var(--accent-light);
+  color: var(--accent-green);
+  border: 1px solid var(--border-strong);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.answerTitle {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.answerBody {
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.answerBody p {
+  margin-bottom: 1.5rem;
+}
+
+.citation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  height: 1.2rem;
+  margin: 0 0.2rem;
+  cursor: pointer;
+  vertical-align: super;
+  transition: all 0.2s;
+}
+
+.citation:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.documentFooter {
+  margin-top: 3rem;
+  margin-bottom: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-strong);
+  display: flex;
+  gap: 2rem;
+}
+
+.footerMetric {
+  display: flex;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.metricLabel {
+  color: var(--text-tertiary);
+}
+
+.metricValue {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Suggestions Area */
+.suggestionsContainer {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.suggestionPill {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.suggestionPill:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-green);
+}
+
+/* Floating Bottom Input Area */
+.floatingInputWrapper {
+  position: sticky;
+  bottom: 1rem;
+  margin-top: 1rem;
+  background: var(--bg-sidebar);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-popover);
+  width: 100%;
+  max-width: 800px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 50;
+}
+
+.floatingInputWrapper:focus-within {
+  box-shadow: 0 10px 25px -5px rgba(15, 62, 49, 0.2);
+  transform: translateY(-2px);
+}
+
+.floatingInputField {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  flex: 1;
+  outline: none;
+}
+
+.floatingInputField::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.floatingSubmitBtn {
+  background: var(--bg-surface);
+  color: var(--bg-sidebar);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.floatingSubmitBtn:hover {
+  opacity: 0.9;
+}

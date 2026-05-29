@@ -1,86 +1,61 @@
 .sidebar {
-  width: 260px;
+  width: 80px;
   flex-shrink: 0;
-  background-color: var(--bg-surface);
-  border-right: 1px solid var(--border-subtle);
+  background-color: var(--bg-sidebar);
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1rem;
-  z-index: 20;
-}
-
-.sidebar {
-  width: 280px;
-  flex-shrink: 0;
-  background-color: var(--bg-surface);
-  border-right: 1px solid var(--border-strong);
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem 1rem;
+  align-items: center;
+  padding: 1.5rem 0;
   z-index: 20;
 }
 
 .brand {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0 0.5rem;
+  width: 48px;
+  height: 48px;
+  background: var(--border-strong); /* Gold/Beige block for the logo area */
+  border-radius: 4px;
   margin-bottom: 2rem;
+  color: var(--bg-sidebar);
 }
 
 .logoSvg {
-  color: var(--text-primary);
-}
-
-.brandTitle {
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
+  color: inherit;
 }
 
 .navGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.6rem 0.75rem;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
   background: transparent;
-  border: none;
-  border-radius: 6px;
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.5); /* Faded white/green */
   cursor: pointer;
   transition: all 0.15s ease;
-  text-align: left;
 }
 
 .navItem:hover {
-  background: var(--bg-surface-hover);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .navItem.active {
-  background: var(--bg-surface-hover);
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.navItem svg {
-  color: var(--text-tertiary);
-  transition: color 0.15s ease;
-}
-
-.navItem:hover svg, .navItem.active svg {
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .spacer {
@@ -88,40 +63,14 @@
 }
 
 .systemStatus {
-  margin-top: 1rem;
-  padding: 1rem 0.75rem;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.statusHeader {
+  margin-top: auto;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-tertiary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.75rem;
-}
-
-.statusIndicator {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  background: var(--bg-main);
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
+  justify-content: center;
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--node-success);
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+  background: var(--border-strong);
 }
